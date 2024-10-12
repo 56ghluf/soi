@@ -2,8 +2,9 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <bitset>
 
-int N = 200000;
+constexpr int N = 200000;
 
 struct tramp_data {
     int lines;
@@ -121,7 +122,6 @@ int main()
     // Optimisation 1: keep track of every already visited position
     // and the nubmer of visits in that positions.
     std::map<int, int> vposes[lines];
-    std::map<int, int> vleft[lines];
     
     int maxs[lines];
     int max_jump[lines];
@@ -130,7 +130,6 @@ int main()
     
     int current_pos;
     int visited;
-    bool broke;
 
     for (int i = 0; i < lines; i++) {
         //if (i != 20) {
@@ -146,38 +145,33 @@ int main()
         for (int j = 0; j < trampn[i]-2; j++) {
             current_pos = j;
             visited = 1;
-            
+
             if (trampn[i]-j < max) {
                 break;
             }
 
-            broke = false;
-
             while (current_pos < trampn[i]-1) {
-
                 if (vposes[i].find(current_pos) == vposes[i].end()) {
                     vposes[i][current_pos] = visited;
                 } else {
                     if (visited > vposes[i][current_pos]) {
                         vposes[i][current_pos] = visited;
                     } else {
-                        broke = true;
                         break;
                     }
                 }
 
                 visited += 1;
+
                 if (jumps[N*i+current_pos] > max_jump[i]) {
                     max_jump[i] = jumps[N*i+current_pos];
                 }
+
                 current_pos += jumps[N*i+current_pos];
             }
 
             if (visited > max) {
                 max = visited;
-            }
-            if (!broke) {
-                vleft[i][j] = visited;
             }
         }
 
@@ -187,7 +181,11 @@ int main()
 
     // Subsection 4
     // Uses the vposes from section 3
+    // Subsection 5
+
     int max_vpos;
+    std::bitset<N> path;
+
     for (int i = 0; i < lines; i++) {
         if (trampn[i] < 3) {
             std::cout << "Case #" << i << ": " << trampn[i] << std::endl;
@@ -204,19 +202,19 @@ int main()
                 continue;
             }
 
-            for (int k = 1; k < trampn[i]-j && k <= max_jump[i]; k++) {
-                if (vposes[i][j] + 1 - vposes[i][j+k] > 0) {
-                    if (vleft[i].find(j+k) == vleft[i].end()) {
-                        current_pos = j+k;
-                        vleft[i][j+k] = 1;
-                        while (current_pos < trampn[i]-1) {
-                            vleft[i][j+k] += 1;
-                            current_pos += jumps[N*i+current_pos];
-                        }
-                    }
-                    if (vposes[i][j] + vleft[i][j+k] > max) {
-                        max = vposes[i][j] + vleft[i][j+k];
-                    }
+            path.reset();
+
+            for (int k = 1; k < trampn[i]-j && k <= max_jump[i] && path[k-1] == 0; k++) {
+                visited = 1;
+                current_pos = j+k;
+                while (current_pos < trampn[i]-1) {
+                    path.set(current_pos-j-1);
+                    visited += 1;
+                    current_pos += jumps[N*i+current_pos];
+                }
+
+                if (visited + vposes[i][j] > max) {
+                    max = visited + vposes[i][j];
                 }
             }
         }
