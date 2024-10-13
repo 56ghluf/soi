@@ -51,6 +51,8 @@ tramp_data load_tramp_data(std::string filename) {
 
 int main()
 {
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
     tramp_data data = load_tramp_data("input5.txt");
     unsigned int lines = data.lines;
     unsigned int* trampn = data.trampn;
@@ -132,9 +134,9 @@ int main()
     unsigned int visited;
 
     for (int i = 0; i < lines; i++) {
-        if (i > 50) {
-            continue;
-        }
+        //if (i > 50) {
+        //    continue;
+        //}
         if (trampn[i] < 3) {
             std::cout << "Case #" << i << ": " << trampn[i] << std::endl;
             continue;
@@ -182,40 +184,38 @@ int main()
 
     // Figure out the max jump for each line
     
-    int* jump_counts;
+    //int* jump_counts;
 
-    jump_counts = new int[N/2*lines] { 0 };
+    //jump_counts = new int[N/2*lines] { 0 };
+    //
+    //for (int i = 0; i < lines; i++) {
+    //    //if (i > 50) {
+    //    //    continue;
+    //    //}
+    //    for (int j = 0; j < trampn[i]; j++) {
+    //        if (jumps[N*i+j] < trampn[i]/2+(trampn[i]%2)+1) {
+    //            jump_counts[N/2*i+jumps[N*i+j]] += 1;
+    //        }
+    //    }
+    //}
+
+    //// Fill the max jumps
+
+    //int max_jump[lines];
+
+    //for (int i = 0; i < lines; i++) {
+    //    //if (i > 50) {
+    //    //    continue;
+    //    //}
+    //    max_jump[i] = 1;
+    //    for (int j = trampn[i]/2; j > 1; j--) {
+    //        if (jump_counts[N/2*i+j] >= j) {
+    //            max_jump[i] = j;
+    //            break;
+    //        }
+    //    }
+    //}
     
-    for (int i = 0; i < lines; i++) {
-        //if (i > 50) {
-        //    continue;
-        //}
-        for (int j = 0; j < trampn[i]; j++) {
-            if (jumps[N*i+j] < trampn[i]/2+(trampn[i]%2)+1) {
-                jump_counts[N/2*i+jumps[N*i+j]] += 1;
-            }
-        }
-    }
-
-    // Fill the max jumps
-
-    int max_jump[lines];
-
-    for (int i = 0; i < lines; i++) {
-        //if (i > 50) {
-        //    continue;
-        //}
-        max_jump[i] = 1;
-        for (int j = trampn[i]/2; j > 1; j--) {
-            if (jump_counts[N/2*i+j] >= j) {
-                max_jump[i] = j;
-                break;
-            }
-        }
-    }
-    
-    int max_vpos_index;
- 
     unsigned int max_vpos;
     std::bitset<N> path;
 
@@ -228,11 +228,9 @@ int main()
         current_trampn = trampn[i];
         current_ioffset = N*i;
 
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-
-        if (i > 50) {
-            continue;
-        }
+        //if (i > 50) {
+        //    continue;
+        //}
         if (current_trampn < 3) {
             std::cout << "Case #" << i << ": " << current_trampn << std::endl;
             continue;
@@ -251,7 +249,7 @@ int main()
 
             path.reset();
 
-            for (int k = 1; k < current_trampn-j && path[k] == 0 && k < max_jump[i]; k++) {
+            for (int k = 1; k < current_trampn-j && path[k] == 0; k++) {
                 if (vposes[i][j+k] > current_vpos) {
                     break;
                 }
@@ -268,8 +266,9 @@ int main()
             }
         }
         std::cout << "Case #" << i << ": " << max << std::endl;
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Timer: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     }
+
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    std::cout << "Timer: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     return 0;
 }
