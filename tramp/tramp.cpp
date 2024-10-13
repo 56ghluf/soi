@@ -250,7 +250,7 @@ int main()
         max = maxs[i];
         max_vpos = 0;
 
-        vleft_len = current_trampn/200001;
+        vleft_len = current_trampn/1;
         vleft_len_left = current_trampn - vleft_len;
 
         int vleft[vleft_len] = { 0 };
