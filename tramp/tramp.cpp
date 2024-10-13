@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <bitset>
+#include <chrono>
 
 constexpr int N = 200000;
 
@@ -124,7 +125,6 @@ int main()
     std::map<int, int> vposes[lines];
     
     int maxs[lines];
-    int max_jump[lines];
 
     int max;
     
@@ -132,9 +132,9 @@ int main()
     int visited;
 
     for (int i = 0; i < lines; i++) {
-        //if (i != 20) {
-        //    continue;
-        //}
+        if (i > 50) {
+            continue;
+        }
         if (trampn[i] < 3) {
             std::cout << "Case #" << i << ": " << trampn[i] << std::endl;
             continue;
@@ -163,10 +163,6 @@ int main()
 
                 visited += 1;
 
-                if (jumps[N*i+current_pos] > max_jump[i]) {
-                    max_jump[i] = jumps[N*i+current_pos];
-                }
-
                 current_pos += jumps[N*i+current_pos];
             }
 
@@ -183,10 +179,55 @@ int main()
     // Uses the vposes from section 3
     // Subsection 5
 
+    // Figure out the max jump for each line
+    
+    int* jump_counts;
+
+    jump_counts = new int[N/2*lines] { 0 };
+    
+    for (int i = 0; i < lines; i++) {
+        if (i > 50) {
+            continue;
+        }
+        for (int j = 0; j < trampn[i]; j++) {
+            if (jumps[N*i+j] < trampn[i]/2+1) {
+                jump_counts[N/2*i+jumps[N*i+j]] += 1;
+            }
+        }
+    }
+
+    // Fill the max jumps
+
+    // Doesn't work because it means that we can't skip as many
+    // instances
+    //int max_jump[lines];
+    //int n_divider = 1;
+
+    //std::cout << N/n_divider << std::endl;
+
+    //for (int i = 0; i < lines; i++) {
+    //    if (i > 50) {
+    //        continue;
+    //    }
+    //    max_jump[i] = N/n_divider;
+    //    for (int j = trampn[i]/2; j > N/n_divider; j--) {
+    //        if (jump_counts[N/2*i+j] >= j) {
+    //            max_jump[i] = j;
+    //            break;
+    //        }
+    //    }
+    //}
+    //
+    //int max_vpos_index;
+ 
     int max_vpos;
     std::bitset<N> path;
 
     for (int i = 0; i < lines; i++) {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        if (i > 50) {
+            continue;
+        }
         if (trampn[i] < 3) {
             std::cout << "Case #" << i << ": " << trampn[i] << std::endl;
             continue;
@@ -204,7 +245,7 @@ int main()
 
             path.reset();
 
-            for (int k = 1; k < trampn[i]-j && k <= max_jump[i] && path[k-1] == 0; k++) {
+            for (int k = 1; k < trampn[i]-j && path[k-1] == 0; k++) {
                 visited = 1;
                 current_pos = j+k;
                 while (current_pos < trampn[i]-1) {
@@ -219,7 +260,8 @@ int main()
             }
         }
         std::cout << "Case #" << i << ": " << max << std::endl;
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     }
-
     return 0;
 }
