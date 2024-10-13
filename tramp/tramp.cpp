@@ -233,6 +233,8 @@ int main()
 
     unsigned int current_vleft;
 
+    unsigned int current_vpos;
+
     for (int i = 0; i < lines; i++) {
         current_trampn = trampn[i];
         current_ioffset = N*i;
@@ -256,8 +258,9 @@ int main()
         int vleft[vleft_len] = { 0 };
 
         for (int j = 0; j < current_trampn-2; j++) {
-            if (vposes[i][j] > max_vpos) {
-                max_vpos = vposes[i][j];
+            current_vpos = vposes[i][j];
+            if (current_vpos > max_vpos) {
+                max_vpos = current_vpos;
             } else {
                 continue;
             }
@@ -265,6 +268,9 @@ int main()
             path.reset();
 
             for (int k = 1; k < current_trampn-j && path[k] == 0; k++) {
+                if (vposes[i][j+k] > current_vpos) {
+                    break;
+                }
                 if (j+k > vleft_len_left) {
                     vleft_pos = j+k-vleft_len_left;
                     if (vleft[vleft_pos] == 0) {
@@ -278,8 +284,8 @@ int main()
                         vleft[vleft_pos] = visited;
                     }
                     current_vleft = vleft[vleft_pos];
-                    if (current_vleft + vposes[i][j] > max) {
-                        max = current_vleft + vposes[i][j];
+                    if (current_vleft + current_vpos > max) {
+                        max = current_vleft + current_vpos;
                     }
                 } else {
                     visited = 1;
@@ -289,15 +295,15 @@ int main()
                         visited += 1;
                         current_pos += jumps[current_ioffset+current_pos];
                     }
-                    if (visited + vposes[i][j] > max) {
-                        max = visited + vposes[i][j];
+                    if (visited + current_vpos > max) {
+                        max = visited + current_vpos;
                     }
                 }
             }
         }
         std::cout << "Case #" << i << ": " << max << std::endl;
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
+        std::cout << "Timer: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     }
     return 0;
 }
