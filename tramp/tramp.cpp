@@ -160,7 +160,7 @@ int main()
     for (int i = 0; i < lines; i++) {
         cumulated_trampn += current_trampn;
         current_trampn = trampn[i];
-        //if (i > 50) {
+        //if (i != 20) {
         //    continue;
         //}
         if (trampn[i] < 3) {
@@ -210,38 +210,52 @@ int main()
 
     // Figure out the max jump for each line
     
-    //int* jump_counts;
+    int* jump_counts;
 
-    //jump_counts = new int[N/2*lines] { 0 };
-    //
-    //for (int i = 0; i < lines; i++) {
-    //    //if (i > 50) {
-    //    //    continue;
-    //    //}
-    //    for (int j = 0; j < trampn[i]; j++) {
-    //        if (jumps[N*i+j] < trampn[i]/2+(trampn[i]%2)+1) {
-    //            jump_counts[N/2*i+jumps[N*i+j]] += 1;
-    //        }
-    //    }
-    //}
-
-    //// Fill the max jumps
-
-    //int max_jump[lines];
-
-    //for (int i = 0; i < lines; i++) {
-    //    //if (i > 50) {
-    //    //    continue;
-    //    //}
-    //    max_jump[i] = 1;
-    //    for (int j = trampn[i]/2; j > 1; j--) {
-    //        if (jump_counts[N/2*i+j] >= j) {
-    //            max_jump[i] = j;
-    //            break;
-    //        }
-    //    }
-    //}
+    jump_counts = new int[N/2*lines] { 0 };
     
+    current_trampn = 0;
+    cumulated_trampn = 0;
+    for (int i = 0; i < lines; i++) {
+        cumulated_trampn += current_trampn;
+        current_trampn = trampn[i];
+        //if (i > 50) {
+        //    continue;
+        //}
+        for (int j = 0; j < trampn[i]; j++) {
+            if (jumps[cumulated_trampn+j] < trampn[i]/2+(current_trampn%2)+1) {
+                jump_counts[N/2*i+jumps[cumulated_trampn+j]] += 1;
+            }
+        }
+    }
+
+    // Fill the max jumps
+    int max_jump[lines];
+    bool hit_non_zero;
+
+    for (int i = 0; i < lines; i++) {
+        hit_non_zero = false;
+        //if (i > 50) {
+        //    continue;
+        //}
+        max_jump[i] = 1;
+        for (int j = trampn[i]/2; j > 1; j--) {
+            if (jump_counts[N/2*i+j] != 0 and hit_non_zero == false) {
+                hit_non_zero = true;
+            } 
+
+            if (jump_counts[N/2*i+j] == 0 and hit_non_zero == true) {
+                max_jump[i] = j;
+                break;
+            }
+
+            if (jump_counts[N/2*i+j] >= j) {
+                max_jump[i] = j;
+                break;
+            }
+        }
+    }
+
     unsigned int max_vpos;
     std::bitset<N> path;
 
@@ -254,7 +268,7 @@ int main()
         cumulated_trampn += current_trampn;
         current_trampn = trampn[i];
 
-        //if (i > 50) {
+        //if (i != 19) {
         //    continue;
         //}
         if (current_trampn < 3) {
@@ -275,7 +289,11 @@ int main()
 
             path.reset();
 
-            for (int k = 1; k < current_trampn-j && path[k] == 0; k++) {
+            for (int k = 1; k < current_trampn-j && k <= max_jump[i]; k++) {
+                if (path[k] == 1) {
+                    continue;
+                }
+
                 if (vposes[cumulated_trampn + j+k] > current_vpos) {
                     break;
                 }
