@@ -251,8 +251,6 @@ int main()
     cumulated_trampn = 0;
 
     for (int i = 0; i < lines; i++) {
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-
         cumulated_trampn += current_trampn;
         current_trampn = trampn[i];
 
@@ -294,8 +292,6 @@ int main()
             }
         }
         std::cout << "Case #" << i << ": " << max << std::endl;
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Timer: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     }
     return 0;
 }
