@@ -132,9 +132,9 @@ int main()
     unsigned int visited;
 
     for (int i = 0; i < lines; i++) {
-        if (i > 50) {
-            continue;
-        }
+        //if (i > 50) {
+        //    continue;
+        //}
         if (trampn[i] < 3) {
             std::cout << "Case #" << i << ": " << trampn[i] << std::endl;
             continue;
@@ -228,15 +228,17 @@ int main()
 
     unsigned int current_vpos;
 
+    unsigned int ascending_vposes_pos = 0;
+
     for (int i = 0; i < lines; i++) {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
         current_trampn = trampn[i];
         current_ioffset = N*i;
 
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-        if (i > 50) {
-            continue;
-        }
+        //if (i < 2) {
+        //    continue;
+        //}
         if (current_trampn < 3) {
             std::cout << "Case #" << i << ": " << current_trampn << std::endl;
             continue;
@@ -245,35 +247,72 @@ int main()
         max = maxs[i];
         max_vpos = 0;
 
-        for (int j = 0; j < current_trampn-2; j++) {
-            current_vpos = vposes[i][j];
-            if (current_vpos > max_vpos) {
-                max_vpos = current_vpos;
-            } else {
-                continue;
+        // Compute the ascending vposes
+        unsigned int ascending_vposes[N] = { 0 };
+        ascending_vposes[0] = 0;
+        ascending_vposes_pos = 0;
+
+        for (int j = 1; j < current_trampn-2; j++) {
+            if (current_vpos > vposes[i][ascending_vposes[ascending_vposes_pos]]) {
+                ascending_vposes_pos += 1;
+                ascending_vposes[ascending_vposes_pos] = j;
+            } 
+        }
+
+        for (int j = 0; j < ascending_vposes_pos + 1; j++) {
+            std::cout << ascending_vposes[j] << std::endl;
+        }
+
+        // Go through all possible offsets
+        for (int j = 1; j < current_trampn; j++) {
+            // Calculate the distance left
+            visited = 1;
+            current_pos = j;
+            while (current_pos < current_trampn-1) {
+                visited += 1;
+                current_pos += jumps[current_ioffset+current_pos];
             }
 
-            path.reset();
-
-            for (int k = 1; k < current_trampn-j && path[k] == 0; k++) {
-                if (vposes[i][j+k] > current_vpos) {
-                    break;
-                }
-                visited = 1;
-                current_pos = j+k;
-                while (current_pos < current_trampn-1) {
-                    path.set(current_pos-j);
-                    visited += 1;
-                    current_pos += jumps[current_ioffset+current_pos];
-                }
-                if (visited + current_vpos > max) {
-                    max = visited + current_vpos;
+            // Go through the ascending vposes
+            for (int k = 0; k < ascending_vposes_pos + 1 && ascending_vposes[k] < j; k++) {
+                if (visited + vposes[i][ascending_vposes[k]] > max) {
+                    max = visited + vposes[i][ascending_vposes[k]];
                 }
             }
         }
         std::cout << "Case #" << i << ": " << max << std::endl;
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << "Timer: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
+        std::cout << "Time 1: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
+
+        //for (int j = 0; j < current_trampn-2; j++) {
+        //    current_vpos = vposes[i][j];
+        //    if (current_vpos > max_vpos) {
+        //        max_vpos = current_vpos;
+        //    } else {
+        //        continue;
+        //    }
+
+        //    path.reset();
+
+        //    for (int k = 1; k < current_trampn-j && path[k] == 0; k++) {
+        //        if (vposes[i][j+k] > current_vpos) {
+        //            break;
+        //        }
+        //        visited = 1;
+        //        current_pos = j+k;
+        //        while (current_pos < current_trampn-1) {
+        //            path.set(current_pos-j);
+        //            visited += 1;
+        //            current_pos += jumps[current_ioffset+current_pos];
+        //        }
+        //        if (visited + current_vpos > max) {
+        //            max = visited + current_vpos;
+        //        }
+        //    }
+        //}
+        //std::cout << "Case #" << i << ": " << max << std::endl;
+        //end = std::chrono::steady_clock::now();
+        //std::cout << "Time 2: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     }
     return 0;
 }
