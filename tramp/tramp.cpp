@@ -177,48 +177,44 @@ int main()
 
     // Subsection 4
     // Uses the vposes from section 3
+   
     // Subsection 5
 
     // Figure out the max jump for each line
     
-    //int* jump_counts;
+    int* jump_counts;
 
-    //jump_counts = new int[N/2*lines] { 0 };
-    //
-    //for (int i = 0; i < lines; i++) {
-    //    if (i > 50) {
-    //        continue;
-    //    }
-    //    for (int j = 0; j < trampn[i]; j++) {
-    //        if (jumps[N*i+j] < trampn[i]/2+1) {
-    //            jump_counts[N/2*i+jumps[N*i+j]] += 1;
-    //        }
-    //    }
-    //}
+    jump_counts = new int[N/2*lines] { 0 };
+    
+    for (int i = 0; i < lines; i++) {
+        //if (i > 50) {
+        //    continue;
+        //}
+        for (int j = 0; j < trampn[i]; j++) {
+            if (jumps[N*i+j] < trampn[i]/2+(trampn[i]%2)+1) {
+                jump_counts[N/2*i+jumps[N*i+j]] += 1;
+            }
+        }
+    }
 
     // Fill the max jumps
 
-    // Doesn't work because it means that we can't skip as many
-    // instances
-    //int max_jump[lines];
-    //int n_divider = 1;
+    int max_jump[lines];
 
-    //std::cout << N/n_divider << std::endl;
-
-    //for (int i = 0; i < lines; i++) {
-    //    if (i > 50) {
-    //        continue;
-    //    }
-    //    max_jump[i] = N/n_divider;
-    //    for (int j = trampn[i]/2; j > N/n_divider; j--) {
-    //        if (jump_counts[N/2*i+j] >= j) {
-    //            max_jump[i] = j;
-    //            break;
-    //        }
-    //    }
-    //}
-    //
-    //int max_vpos_index;
+    for (int i = 0; i < lines; i++) {
+        //if (i > 50) {
+        //    continue;
+        //}
+        max_jump[i] = 1;
+        for (int j = trampn[i]/2; j > 1; j--) {
+            if (jump_counts[N/2*i+j] >= j) {
+                max_jump[i] = j;
+                break;
+            }
+        }
+    }
+    
+    int max_vpos_index;
  
     unsigned int max_vpos;
     std::bitset<N> path;
@@ -255,7 +251,7 @@ int main()
 
             path.reset();
 
-            for (int k = 1; k < current_trampn-j && path[k] == 0; k++) {
+            for (int k = 1; k < current_trampn-j && path[k] == 0 && k < max_jump[i]; k++) {
                 if (vposes[i][j+k] > current_vpos) {
                     break;
                 }
