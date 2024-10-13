@@ -19,7 +19,9 @@ tramp_data load_tramp_data(std::string filename) {
 
     unsigned int lines;
     static unsigned int* trampn;
-    static unsigned int* jumps;
+    unsigned int* jumps;
+
+    unsigned int jump_pos = 0;
 
     if (input.is_open()) {
         input >> content;
@@ -31,6 +33,7 @@ tramp_data load_tramp_data(std::string filename) {
         // Fill the tramps
         unsigned int n;
         unsigned int m;
+
         for (int i = 0; i < lines; i++) {
             input >> content;
             n = std::stoi(content);
@@ -41,18 +44,23 @@ tramp_data load_tramp_data(std::string filename) {
                 input >> content;
                 m = std::stoi(content);
 
-                jumps[i*N+j] = m;
+                jumps[jump_pos] = m;
+                jump_pos += 1;
             }
         }
     }
 
-    return tramp_data{ lines, trampn, jumps };
+    static unsigned int* reduced_jumps = new unsigned int[jump_pos];
+
+    for (int i = 0; i < jump_pos; i++) {
+        reduced_jumps[i] = jumps[i];
+    } 
+
+    return tramp_data{ lines, trampn, reduced_jumps };
 }
 
 int main()
 {
-    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
-
     tramp_data data = load_tramp_data("input5.txt");
     unsigned int lines = data.lines;
     unsigned int* trampn = data.trampn;
@@ -183,7 +191,7 @@ int main()
 
                 visited += 1;
 
-                current_pos += jumps[N*i+current_pos];
+                current_pos += jumps[cumulated_trampn+current_pos];
             }
 
             if (visited > max) {
@@ -239,16 +247,14 @@ int main()
 
     unsigned int current_vpos;
 
-    unsigned int current_ioffset;
-
     current_trampn = 0;
     cumulated_trampn = 0;
 
     for (int i = 0; i < lines; i++) {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
         cumulated_trampn += current_trampn;
         current_trampn = trampn[i];
-
-        current_ioffset = N*i;
 
         //if (i > 50) {
         //    continue;
@@ -280,7 +286,7 @@ int main()
                 while (current_pos < current_trampn-1) {
                     path.set(current_pos-j);
                     visited += 1;
-                    current_pos += jumps[current_ioffset+current_pos];
+                    current_pos += jumps[cumulated_trampn+current_pos];
                 }
                 if (visited + current_vpos > max) {
                     max = visited + current_vpos;
