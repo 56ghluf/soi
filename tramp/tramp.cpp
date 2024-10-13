@@ -228,7 +228,11 @@ int main()
 
     unsigned int current_vpos;
 
-    unsigned int ascending_vposes_pos = 0;
+    unsigned int ascending_vposes_pos;
+
+    unsigned int last_ascending_vposes_pos;
+
+    unsigned int start_checking = 0;
 
     for (int i = 0; i < lines; i++) {
         std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -236,9 +240,9 @@ int main()
         current_ioffset = N*i;
 
 
-        //if (i < 2) {
-        //    continue;
-        //}
+        if (i != 36) {
+            continue;
+        }
         if (current_trampn < 3) {
             std::cout << "Case #" << i << ": " << current_trampn << std::endl;
             continue;
@@ -251,24 +255,32 @@ int main()
         unsigned int ascending_vposes[N] = { 0 };
         ascending_vposes[0] = 0;
         ascending_vposes_pos = 0;
-
+        
         for (int j = 1; j < current_trampn-2; j++) {
-            if (current_vpos > vposes[i][ascending_vposes[ascending_vposes_pos]]) {
+            if (vposes[i][j] > vposes[i][ascending_vposes[ascending_vposes_pos]]) {
                 ascending_vposes_pos += 1;
                 ascending_vposes[ascending_vposes_pos] = j;
             } 
         }
 
-        for (int j = 0; j < ascending_vposes_pos + 1; j++) {
-            std::cout << ascending_vposes[j] << std::endl;
-        }
-
         // Go through all possible offsets
+        last_ascending_vposes_pos = 0;
         for (int j = 1; j < current_trampn; j++) {
+            if (j == ascending_vposes[last_ascending_vposes_pos+1]+1) {
+                last_ascending_vposes_pos += 1;
+                path.reset();
+            }
+
+            if (path[j] == 1) {
+                continue;
+            }
+
             // Calculate the distance left
             visited = 1;
             current_pos = j;
+
             while (current_pos < current_trampn-1) {
+                path.set(current_pos);
                 visited += 1;
                 current_pos += jumps[current_ioffset+current_pos];
             }
