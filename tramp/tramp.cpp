@@ -5,32 +5,32 @@
 #include <bitset>
 #include <chrono>
 
-constexpr int N = 200000;
+constexpr unsigned int N = 200000;
 
 struct tramp_data {
-    int lines;
-    int* trampn;
-    int* jumps;
+    unsigned int lines;
+    unsigned int* trampn;
+    unsigned int* jumps;
 };
 
 tramp_data load_tramp_data(std::string filename) {
     std::ifstream input(filename);
     std::string content;
 
-    int lines;
-    static int* trampn;
-    static int* jumps;
+    unsigned int lines;
+    static unsigned int* trampn;
+    static unsigned int* jumps;
 
     if (input.is_open()) {
         input >> content;
         lines = std::stoi(content);
         
-        trampn = new int[lines];
-        jumps = new int[lines*N];
+        trampn = new unsigned int[lines];
+        jumps = new unsigned int[lines*N];
 
         // Fill the tramps
-        int n;
-        int m;
+        unsigned int n;
+        unsigned int m;
         for (int i = 0; i < lines; i++) {
             input >> content;
             n = std::stoi(content);
@@ -52,9 +52,9 @@ tramp_data load_tramp_data(std::string filename) {
 int main()
 {
     tramp_data data = load_tramp_data("input5.txt");
-    int lines = data.lines;
-    int* trampn = data.trampn;
-    int* jumps = data.jumps;
+    unsigned int lines = data.lines;
+    unsigned int* trampn = data.trampn;
+    unsigned int* jumps = data.jumps;
 
     // Print the data
     //for (int i = 0; i < lines; i++) {
@@ -122,14 +122,14 @@ int main()
     // Subsection 3
     // Optimisation 1: keep track of every already visited position
     // and the nubmer of visits in that positions.
-    std::map<int, int> vposes[lines];
+    std::map<unsigned int, unsigned int> vposes[lines];
     
-    int maxs[lines];
+    unsigned int maxs[lines];
 
-    int max;
+    unsigned int max;
     
-    int current_pos;
-    int visited;
+    unsigned int current_pos;
+    unsigned int visited;
 
     for (int i = 0; i < lines; i++) {
         if (i > 50) {
@@ -181,20 +181,20 @@ int main()
 
     // Figure out the max jump for each line
     
-    int* jump_counts;
+    //int* jump_counts;
 
-    jump_counts = new int[N/2*lines] { 0 };
-    
-    for (int i = 0; i < lines; i++) {
-        if (i > 50) {
-            continue;
-        }
-        for (int j = 0; j < trampn[i]; j++) {
-            if (jumps[N*i+j] < trampn[i]/2+1) {
-                jump_counts[N/2*i+jumps[N*i+j]] += 1;
-            }
-        }
-    }
+    //jump_counts = new int[N/2*lines] { 0 };
+    //
+    //for (int i = 0; i < lines; i++) {
+    //    if (i > 50) {
+    //        continue;
+    //    }
+    //    for (int j = 0; j < trampn[i]; j++) {
+    //        if (jumps[N*i+j] < trampn[i]/2+1) {
+    //            jump_counts[N/2*i+jumps[N*i+j]] += 1;
+    //        }
+    //    }
+    //}
 
     // Fill the max jumps
 
@@ -220,24 +220,25 @@ int main()
     //
     //int max_vpos_index;
  
-    int max_vpos;
+    unsigned int max_vpos;
     std::bitset<N> path;
 
-    int vleft_len;
-    int vleft_len_left;
+    unsigned int vleft_len;
+    unsigned int vleft_len_left;
 
-    int vleft_pos;
+    unsigned int vleft_pos;
 
-    int current_trampn;
-    int current_ioffset;
+    unsigned int current_trampn;
+    unsigned int current_ioffset;
 
-    int current_vleft;
+    unsigned int current_vleft;
 
     for (int i = 0; i < lines; i++) {
         current_trampn = trampn[i];
         current_ioffset = N*i;
 
         std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
         if (i > 50) {
             continue;
         }
@@ -249,8 +250,8 @@ int main()
         max = maxs[i];
         max_vpos = 0;
 
-        vleft_len = current_trampn/2;
-        vleft_len_left = vleft_len + current_trampn % 2;
+        vleft_len = current_trampn/200001;
+        vleft_len_left = current_trampn - vleft_len;
 
         int vleft[vleft_len] = { 0 };
 
