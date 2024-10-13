@@ -223,15 +223,8 @@ int main()
     unsigned int max_vpos;
     std::bitset<N> path;
 
-    unsigned int vleft_len;
-    unsigned int vleft_len_left;
-
-    unsigned int vleft_pos;
-
     unsigned int current_trampn;
     unsigned int current_ioffset;
-
-    unsigned int current_vleft;
 
     unsigned int current_vpos;
 
@@ -252,11 +245,6 @@ int main()
         max = maxs[i];
         max_vpos = 0;
 
-        vleft_len = current_trampn/1;
-        vleft_len_left = current_trampn - vleft_len;
-
-        int vleft[vleft_len] = { 0 };
-
         for (int j = 0; j < current_trampn-2; j++) {
             current_vpos = vposes[i][j];
             if (current_vpos > max_vpos) {
@@ -271,33 +259,15 @@ int main()
                 if (vposes[i][j+k] > current_vpos) {
                     break;
                 }
-                if (j+k > vleft_len_left) {
-                    vleft_pos = j+k-vleft_len_left;
-                    if (vleft[vleft_pos] == 0) {
-                        visited = 1;
-                        current_pos = j+k;
-                        while (current_pos < current_trampn-1) {
-                            path.set(current_pos-j);
-                            visited += 1;
-                            current_pos += jumps[current_ioffset+current_pos];
-                        }
-                        vleft[vleft_pos] = visited;
-                    }
-                    current_vleft = vleft[vleft_pos];
-                    if (current_vleft + current_vpos > max) {
-                        max = current_vleft + current_vpos;
-                    }
-                } else {
-                    visited = 1;
-                    current_pos = j+k;
-                    while (current_pos < current_trampn-1) {
-                        path.set(current_pos-j);
-                        visited += 1;
-                        current_pos += jumps[current_ioffset+current_pos];
-                    }
-                    if (visited + current_vpos > max) {
-                        max = visited + current_vpos;
-                    }
+                visited = 1;
+                current_pos = j+k;
+                while (current_pos < current_trampn-1) {
+                    path.set(current_pos-j);
+                    visited += 1;
+                    current_pos += jumps[current_ioffset+current_pos];
+                }
+                if (visited + current_vpos > max) {
+                    max = visited + current_vpos;
                 }
             }
         }
