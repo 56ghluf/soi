@@ -124,7 +124,19 @@ int main()
     // Subsection 3
     // Optimisation 1: keep track of every already visited position
     // and the nubmer of visits in that positions.
-    std::map<unsigned int, unsigned int> vposes[lines];
+    int* vposes;
+    
+    int total_jumps = 0;
+
+    for (int i = 0; i < lines; i++) {
+        total_jumps += trampn[i];
+    }
+
+    vposes = new int[total_jumps*lines];
+
+    for (int i = 0; i < total_jumps*lines; i++) {
+        vposes[i] = 0;
+    }
     
     unsigned int maxs[lines];
 
@@ -133,7 +145,13 @@ int main()
     unsigned int current_pos;
     unsigned int visited;
 
+    unsigned int current_trampn = 0;
+
+    unsigned int cumulated_trampn = 0; 
+
     for (int i = 0; i < lines; i++) {
+        cumulated_trampn += current_trampn;
+        current_trampn = trampn[i];
         //if (i > 50) {
         //    continue;
         //}
@@ -153,11 +171,11 @@ int main()
             }
 
             while (current_pos < trampn[i]-1) {
-                if (vposes[i].find(current_pos) == vposes[i].end()) {
-                    vposes[i][current_pos] = visited;
+                if (vposes[cumulated_trampn + current_pos] == 0) {
+                    vposes[cumulated_trampn + current_pos] = visited;
                 } else {
-                    if (visited > vposes[i][current_pos]) {
-                        vposes[i][current_pos] = visited;
+                    if (visited > vposes[cumulated_trampn + current_pos]) {
+                        vposes[cumulated_trampn + current_pos] = visited;
                     } else {
                         break;
                     }
@@ -219,13 +237,17 @@ int main()
     unsigned int max_vpos;
     std::bitset<N> path;
 
-    unsigned int current_trampn;
-    unsigned int current_ioffset;
-
     unsigned int current_vpos;
 
+    unsigned int current_ioffset;
+
+    current_trampn = 0;
+    cumulated_trampn = 0;
+
     for (int i = 0; i < lines; i++) {
+        cumulated_trampn += current_trampn;
         current_trampn = trampn[i];
+
         current_ioffset = N*i;
 
         //if (i > 50) {
@@ -240,7 +262,7 @@ int main()
         max_vpos = 0;
 
         for (int j = 0; j < current_trampn-2; j++) {
-            current_vpos = vposes[i][j];
+            current_vpos = vposes[cumulated_trampn + j];
             if (current_vpos > max_vpos) {
                 max_vpos = current_vpos;
             } else {
@@ -250,7 +272,7 @@ int main()
             path.reset();
 
             for (int k = 1; k < current_trampn-j && path[k] == 0; k++) {
-                if (vposes[i][j+k] > current_vpos) {
+                if (vposes[cumulated_trampn + j+k] > current_vpos) {
                     break;
                 }
                 visited = 1;
@@ -266,9 +288,8 @@ int main()
             }
         }
         std::cout << "Case #" << i << ": " << max << std::endl;
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << "Timer: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     }
-
-    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-    std::cout << "Timer: " << std::chrono::duration_cast<std::chrono::seconds>(end-start).count() << std::endl;
     return 0;
 }
