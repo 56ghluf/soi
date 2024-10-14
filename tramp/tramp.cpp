@@ -210,48 +210,16 @@ int main()
 
     // Figure out the max jump for each line
     
-    int* jump_counts;
-
-    jump_counts = new int[N/2*lines] { 0 };
-    
-    current_trampn = 0;
-    cumulated_trampn = 0;
-    for (int i = 0; i < lines; i++) {
-        cumulated_trampn += current_trampn;
-        current_trampn = trampn[i];
-        //if (i > 50) {
-        //    continue;
-        //}
-        for (int j = 0; j < trampn[i]; j++) {
-            if (jumps[cumulated_trampn+j] <= trampn[i]/2+(current_trampn%2)) {
-                jump_counts[N/2*i+jumps[cumulated_trampn+j]] += 1;
-            }
-        }
-    }
-
     // Fill the max jumps
     int max_jumps[lines];
 
-    for (int i = 0; i < lines; i++) {
-        //if (i > 50) {
-        //    continue;
-        //}
-        max_jumps[i] = 1;
-        for (int j = trampn[i]/2; j > 1; j--) {
-            if (jump_counts[N/2*i+j] >= j) {
-                max_jumps[i] = j+323;
-                break;
-            }
-        }
-    }
+    int start_jump;
+    int start_pos;
 
     current_trampn = 0;
     cumulated_trampn = 0;
 
     int max_jump;
-    int start_jump;
-    int start_pos;
-
     for (int i = 0; i < lines; i++) {
         cumulated_trampn += current_trampn;
         current_trampn = trampn[i];
