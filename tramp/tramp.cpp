@@ -213,32 +213,41 @@ int main()
     // Fill the max jumps
     int max_jumps[lines];
 
-    int start_jump;
     int start_pos;
+    int next_biggest;
+    bool hit_next_biggest;
+
+    int max_jump;
 
     current_trampn = 0;
     cumulated_trampn = 0;
 
-    int max_jump;
     for (int i = 0; i < lines; i++) {
         cumulated_trampn += current_trampn;
         current_trampn = trampn[i];
 
         max_jump = 1;
+
         start_pos = 0;
-        start_jump = jumps[current_trampn+start_pos];
+        next_biggest = 0;
+        hit_next_biggest = false;
 
         for (int j = 1; j < current_trampn-2; j++) {
-            if (j - start_pos > start_jump) {
-                start_pos = j;
-                start_jump = jumps[current_trampn+j];
+            if (hit_next_biggest == false && jumps[current_trampn+j] > jumps[current_trampn+next_biggest]) {
+                next_biggest = j;
+                hit_next_biggest = true;
             }
-
-            if (jumps[current_trampn+start_pos] > jumps[current_trampn+j]) {
-                if (j - start_pos > max_jump) {
+            if (jumps[current_trampn+j] < jumps[current_trampn + start_pos] || jumps[current_pos + start_pos] < j-start_pos) {
+                if (j-start_pos > max_jump) {
                     max_jump = j - start_pos;
+                }
+                if (hit_next_biggest == true) {
+                    start_pos = next_biggest;
+                } else {
                     start_pos = j;
                 }
+                hit_next_biggest = false;
+                j = start_pos;
             }
         }
         max_jumps[i] = max_jump;
