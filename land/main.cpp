@@ -84,9 +84,9 @@ int main() {
     int current_line_size;
     int cumulated_line_sizes;
 
+    bool before_max;
+
     // Subtask 1
-   
-    //bool before_max;
 
     //current_line_size = 0;
     //cumulated_line_sizes = 0;
@@ -142,15 +142,67 @@ int main() {
 
     // Subsection 2
 
-    std::vector<std::tuple<int, int>>& slice;
+    int distance_left;
+    int index;
+    int height;
+    int current_pos;
+
+    int max_length;
 
     cumulated_line_sizes = 0;
     current_line_size = 0;
     for (int i = 0; i < lines; i++) {
+        if (i != 0) {
+            break;
+        }
+
         cumulated_line_sizes += current_line_size;
         current_line_size = line_sizes[i];
 
-        slice = slice_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, line_data);
+        max_length = 0;
+
+        std::vector<std::tuple<int, int>>& slice = slice_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, line_data);
+
+        for (int j = 0; j < current_line_size; j++) {
+            height = std::get<0>(slice[j]);
+            index = std::get<1>(slice[j]);
+            distance_left = current_line_size - 1 - index;
+
+            if (index >= height-1 && distance_left >= height-1) {
+                std::cout << "Range worked for index: " << index << std::endl;
+                current_pos = cumulated_line_sizes + index - height + 1;
+
+                if (line_data[current_pos] != 1 || line_data[cumulated_line_sizes+index+height-1] != 1) {
+                    continue; 
+                }
+
+                before_max = true;
+
+                for (; current_pos < cumulated_line_sizes + index + height-1; current_pos++) {
+                    if (before_max) {
+                        if (line_data[current_pos+1] - line_data[current_pos] != 1) {
+                            goto broke;
+                        }
+
+                        if (line_data[current_pos+1] - line_data[current_pos] == -1) {
+                            before_max = false;
+                        }
+                    }
+                    if (!before_max) {
+                        if (line_data[current_pos+1] - line_data[current_pos] != -1) {
+                            goto broke;
+                        }               
+                    }
+               }
+
+                if (2*height - 1 > max_length) max_length = 2*height - 1;
+
+                broke:
+            }
+
+        }
+
+        std::cout << "Case #" << i << ": " << max_length << std::endl;
     }
     return 0;
 }
