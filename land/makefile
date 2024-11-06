@@ -1,13 +1,13 @@
-all: run_tramp 
+all: run_main 
 
-run_tramp: tramp
-	./tramp
+run_main: main
+	./main
 
-tramp: tramp.o
-	g++ -O3 -std=c++17 -o tramp tramp.o
+main: main.o
+	g++ -O3 -std=c++17 -o main main.o
 
-tramp.o: tramp.cpp
-	g++ -O3 -std=c++17 -c tramp.cpp
+main.o: main.cpp
+	g++ -O3 -std=c++17 -c main.cpp
 
 clean:
-	rm tramp tramp.o
+	rm main main.o
