@@ -138,13 +138,85 @@ int main() {
 
     // Subsection 2
 
-    int distance_left;
-    int index;
-    int height;
-    int current_pos;
+    //int distance_left;
+    //int index;
+    //int height;
+    //int current_pos;
 
-    int max_height;
-    int max_valid_height;
+    //int max_height;
+    //int max_valid_height;
+
+    //cumulated_line_sizes = 0;
+    //current_line_size = 0;
+
+    //for (int i = 0; i < lines; i++) {
+    //    cumulated_line_sizes += current_line_size;
+    //    current_line_size = line_sizes[i];
+
+    //    max_valid_height = 0;
+
+    //    std::vector<std::tuple<int, int>> slice(current_line_size);
+    //    slice_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, slice, line_data);
+    //    
+    //    std::sort(slice.begin(), slice.end(), sort_desc);
+
+    //    for (int j = 0; j < current_line_size; j++) {
+    //        height = std::get<0>(slice[j]);
+    //        index = std::get<1>(slice[j]);
+    //        distance_left = current_line_size - 1 - index;
+
+    //        if (index >= height-1 && distance_left >= height-1) {
+    //            if (height < max_valid_height) {
+    //                break;
+    //            }
+
+    //            current_pos = cumulated_line_sizes + index - height + 1;
+
+    //            if (line_data[current_pos] != 1 || line_data[cumulated_line_sizes+index+height-1] != 1) {
+    //                continue; 
+    //            }
+
+    //            before_max = true;
+
+    //            for (; current_pos < cumulated_line_sizes + index + height-1; current_pos++) {
+    //                if (before_max) {
+    //                    if (line_data[current_pos+1] - line_data[current_pos] == 1) {
+    //                        continue;
+    //                    }
+
+    //                    if (line_data[current_pos+1] - line_data[current_pos] == -1) {
+    //                        before_max = false;
+    //                        continue;
+    //                    }
+
+    //                    goto broke;
+    //                }
+    //                if (!before_max) {
+    //                    if (line_data[current_pos+1] - line_data[current_pos] == -1) {
+    //                        continue;
+    //                    }               
+
+    //                    goto broke;
+    //                }
+    //            }
+
+    //            if (height > max_valid_height) {
+    //                max_valid_height = height;
+    //            } 
+
+    //            if (2*height - 1 > max_height) {
+    //                max_height = 2*height - 1;
+    //            }
+
+    //            broke:
+    //            continue;
+    //        }
+    //    }
+    //    std::cout << "Case #" << i << ": " << max_height << std::endl;
+    //}
+    
+    // Subsection 3
+    int max_len;
 
     cumulated_line_sizes = 0;
     current_line_size = 0;
@@ -152,67 +224,36 @@ int main() {
     for (int i = 0; i < lines; i++) {
         cumulated_line_sizes += current_line_size;
         current_line_size = line_sizes[i];
-
-        max_valid_height = 0;
-
-        std::vector<std::tuple<int, int>> slice(current_line_size);
-        slice_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, slice, line_data);
         
-        std::sort(slice.begin(), slice.end(), sort_desc);
+        if (current_line_size % 2 == 0) {
+            max_len = 0;
+            goto broke;
+        }
 
+        before_max = true;
         for (int j = 0; j < current_line_size; j++) {
-            height = std::get<0>(slice[j]);
-            index = std::get<1>(slice[j]);
-            distance_left = current_line_size - 1 - index;
+            if (j > current_line_size%2+1) {
+                before_max = false;
+            }
 
-            if (index >= height-1 && distance_left >= height-1) {
-                if (height < max_valid_height) {
-                    break;
-                }
+            if (before_max && line_data[current_line_size+j] < j) {
+                max_len = 0;
+                goto broke;
+            }
 
-                current_pos = cumulated_line_sizes + index - height + 1;
-
-                if (line_data[current_pos] != 1 || line_data[cumulated_line_sizes+index+height-1] != 1) {
-                    continue; 
-                }
-
-                before_max = true;
-
-                for (; current_pos < cumulated_line_sizes + index + height-1; current_pos++) {
-                    if (before_max) {
-                        if (line_data[current_pos+1] - line_data[current_pos] == 1) {
-                            continue;
-                        }
-
-                        if (line_data[current_pos+1] - line_data[current_pos] == -1) {
-                            before_max = false;
-                            continue;
-                        }
-
-                        goto broke;
-                    }
-                    if (!before_max) {
-                        if (line_data[current_pos+1] - line_data[current_pos] == -1) {
-                            continue;
-                        }               
-
-                        goto broke;
-                    }
-                }
-
-                if (height > max_valid_height) {
-                    max_valid_height = height;
-                } 
-
-                if (2*height - 1 > max_height) {
-                    max_height = 2*height - 1;
-                }
-
-                broke:
-                continue;
+            if (!before_max && line_data[current_line_size+j] < current_line_size-j-1) {
+                std::cout << "Broke after max" << std::endl;
+                max_len = 0;
+                goto broke;
             }
         }
-        std::cout << "Case #" << i << ": " << max_height << std::endl;
+
+        max_len = current_line_size;
+
+        broke:
+
+        std::cout << "Case #" << i << ": " << max_len << std::endl;
     }
+
     return 0;
 }
