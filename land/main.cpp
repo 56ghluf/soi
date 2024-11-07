@@ -60,15 +60,10 @@ input_data load_input_data(std::string filename) {
     return input_data{ lines, line_sizes, reduced_line_data };
 }
 
-std::vector<std::tuple<int, int>>& slice_with_indicies(int start, int end, int* line_data) {
-    static std::vector<std::tuple<int, int>> slice(end-start);
-
+void slice_with_indicies(int start, int end, std::vector<std::tuple<int, int>>& slice, int* line_data) {
     for (int i = start; i < end; i++) {
-        slice[i] = std::make_tuple(line_data[i], i-start);
-        std::cout << line_data[i] << " " << i-start << std::endl;
+        slice.at(i-start) = std::make_tuple(line_data[i], i-start);
     }
-
-    return slice;
 }
 
 bool sort_desc(const std::tuple<int, int>& a, const std::tuple<int, int>& b) {
@@ -153,22 +148,22 @@ int main() {
 
     cumulated_line_sizes = 0;
     current_line_size = 0;
+
     for (int i = 0; i < lines; i++) {
         cumulated_line_sizes += current_line_size;
         current_line_size = line_sizes[i];
 
-        if (i != 1) {
-            continue;
-        }
+        //if (i != 1) {
+        //    continue;
+        //}
 
         max_height = 0;
         max_valid_height = 0;
 
-        std::vector<std::tuple<int, int>>& slice = slice_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, line_data);
+        std::vector<std::tuple<int, int>> slice(current_line_size);
+        slice_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, slice, line_data);
+        
         std::sort(slice.begin(), slice.end(), sort_desc);
-        for (int j = 0; j < current_line_size; j++) {
-            std::cout << std::get<0>(slice[j]) << " " << std::get<1>(slice[j]) << std::endl;
-        }
 
         for (int j = 0; j < current_line_size; j++) {
             height = std::get<0>(slice[j]);
@@ -179,9 +174,6 @@ int main() {
                 if (height < max_valid_height) {
                     break;
                 }
-                //if (j != 2) {
-                //    continue;
-                //}
 
                 current_pos = cumulated_line_sizes + index - height + 1;
 
