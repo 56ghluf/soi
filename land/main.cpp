@@ -153,11 +153,6 @@ int main() {
         cumulated_line_sizes += current_line_size;
         current_line_size = line_sizes[i];
 
-        //if (i != 1) {
-        //    continue;
-        //}
-
-        max_height = 0;
         max_valid_height = 0;
 
         std::vector<std::tuple<int, int>> slice(current_line_size);
@@ -218,7 +213,6 @@ int main() {
             }
         }
         std::cout << "Case #" << i << ": " << max_height << std::endl;
-
     }
     return 0;
 }
