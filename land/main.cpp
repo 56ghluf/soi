@@ -6,7 +6,7 @@
 //#include <bitset>
 //#include <chrono> 
 
-constexpr int N = 200000;
+constexpr int N = 1000000;
 
 struct input_data {
     int lines;
@@ -284,6 +284,10 @@ int main() {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
         
+//        if (i != 0) {
+//            break;
+//        }
+
         std::vector<std::tuple<int, int>> max_heights(current_line_size);
         max_heights_with_indicies(cumulated_line_size, cumulated_line_size+current_line_size, max_heights, line_data);
 
@@ -292,16 +296,21 @@ int main() {
         max_len = 0;
 
         for (int j = 0; j < current_line_size; j++) {
-            before_max = false;
+            before_max = true;
 
             max_height = std::get<0>(max_heights[j]);
             index = std::get<1>(max_heights[j]);
+ 
+            //std::cout << "Max height: " << max_height << " Index: " << index << std::endl;
 
             current_pos = index - max_height + 1; 
 
+
             for (; current_pos < index + max_height - 1; current_pos++) {
+                //std::cout << "Current position: " << current_pos << std::endl; 
                 if (before_max) {
-                    if (current_pos - index + max_height < line_data[cumulated_line_size+current_pos]) {
+                    if (current_pos - index + max_height > line_data[cumulated_line_size+current_pos]) {
+                        //std::cout << "Broke before" << std::endl;
                         goto broke;
                     }
 
@@ -309,7 +318,8 @@ int main() {
                         before_max = false;
                     }
                 } else {
-                    if (index + max_height - current_pos < line_data[cumulated_line_size+current_pos]) {
+                    if (index + max_height - current_pos > line_data[cumulated_line_size+current_pos]) {
+                        //std::cout << "Broke after" << std::endl;
                         goto broke;
                     }
                 }
