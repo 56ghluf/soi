@@ -281,8 +281,6 @@ int main() {
 
     int max_len;
 
-    bool invalid_start;
-
     for (int i = 0; i < lines; i++) {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
@@ -308,33 +306,24 @@ int main() {
 
             start_pos = index - max_height + 1; 
 
-            invalid_start = true;
+            before_max = true;
+            current_pos = start_pos;
 
-            //while (invalid_start) {
-                before_max = true;
-                current_pos = start_pos;
-
-                for (; current_pos < 2*index - start_pos; current_pos++) {
-                    if (before_max) {
-                        if (current_pos - start_pos + 1 > line_data[cumulated_line_size+current_pos]) {
-                            start_pos = current_pos - line_data[cumulated_line_size+current_pos] + 1; 
-                            //goto broke;
-                        }
-
-                        if (current_pos == index) {
-                            before_max = false;
-                        }
-                    } else if (2*index - start_pos - current_pos + 1 > line_data[cumulated_line_size+current_pos]) {
-                        start_pos = 2*index - current_pos - line_data[cumulated_line_size+current_pos] + 1;
+            for (; current_pos < 2*index - start_pos; current_pos++) {
+                if (before_max) {
+                    if (current_pos - start_pos + 1 > line_data[cumulated_line_size+current_pos]) {
+                        start_pos = current_pos - line_data[cumulated_line_size+current_pos] + 1; 
                         //goto broke;
                     }
+
+                    if (current_pos == index) {
+                        before_max = false;
+                    }
+                } else if (2*index - start_pos - current_pos + 1 > line_data[cumulated_line_size+current_pos]) {
+                    start_pos = 2*index - current_pos - line_data[cumulated_line_size+current_pos] + 1;
+                    //goto broke;
                 }
-
-                //invalid_start = false;
-
-                //broke:
-                //continue;
-            //}
+            }
 
             if (2*(index-start_pos) + 1 > max_len)
                 max_len = 2*(index-start_pos) + 1;
