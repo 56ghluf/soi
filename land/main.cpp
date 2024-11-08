@@ -275,18 +275,21 @@ int main() {
     current_line_size = 0;
 
     int current_pos;
+    int start_pos;
     int max_height;
     int index;
 
     int max_len;
 
+    bool invalid_start;
+
     for (int i = 0; i < lines; i++) {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
         
-//        if (i != 0) {
-//            break;
-//        }
+        //if (i != 2) {
+        //    continue;
+        //}
 
         std::vector<std::tuple<int, int>> max_heights(current_line_size);
         max_heights_with_indicies(cumulated_line_size, cumulated_line_size+current_line_size, max_heights, line_data);
@@ -296,42 +299,48 @@ int main() {
         max_len = 0;
 
         for (int j = 0; j < current_line_size; j++) {
-            before_max = true;
-
             max_height = std::get<0>(max_heights[j]);
+
+            if (max_height < max_len / 2 + 1)
+                break;
+
             index = std::get<1>(max_heights[j]);
- 
-            //std::cout << "Max height: " << max_height << " Index: " << index << std::endl;
 
-            current_pos = index - max_height + 1; 
+            start_pos = index - max_height + 1; 
 
+            invalid_start = true;
 
-            for (; current_pos < index + max_height - 1; current_pos++) {
-                //std::cout << "Current position: " << current_pos << std::endl; 
-                if (before_max) {
-                    if (current_pos - index + max_height > line_data[cumulated_line_size+current_pos]) {
-                        //std::cout << "Broke before" << std::endl;
-                        goto broke;
-                    }
+            //while (invalid_start) {
+                before_max = true;
+                current_pos = start_pos;
 
-                    if (current_pos == index) {
-                        before_max = false;
-                    }
-                } else {
-                    if (index + max_height - current_pos > line_data[cumulated_line_size+current_pos]) {
-                        //std::cout << "Broke after" << std::endl;
-                        goto broke;
+                for (; current_pos < 2*index - start_pos; current_pos++) {
+                    if (before_max) {
+                        if (current_pos - start_pos + 1 > line_data[cumulated_line_size+current_pos]) {
+                            start_pos = current_pos - line_data[cumulated_line_size+current_pos] + 1; 
+                            //goto broke;
+                        }
+
+                        if (current_pos == index) {
+                            before_max = false;
+                        }
+                    } else if (2*index - start_pos - current_pos + 1 > line_data[cumulated_line_size+current_pos]) {
+                        start_pos = 2*index - current_pos - line_data[cumulated_line_size+current_pos] + 1;
+                        //goto broke;
                     }
                 }
-            }
 
-            std::cout << "Case #" << i << ": " << 2 * max_height - 1 << std::endl;
-            break;
+                //invalid_start = false;
 
-            broke:
+                //broke:
+                //continue;
+            //}
 
-            continue;
+            if (2*(index-start_pos) + 1 > max_len)
+                max_len = 2*(index-start_pos) + 1;
         }
+        std::cout << "Case #" << i << ": " << max_len << std::endl;
     }
+
     return 0;
 }
