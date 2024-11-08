@@ -88,19 +88,19 @@ int main() {
     int* line_data = data.line_data;
 
     int current_line_size;
-    int cumulated_line_sizes;
+    int cumulated_line_size;
 
     bool before_max;
 
     // Subtask 1
 
     //current_line_size = 0;
-    //cumulated_line_sizes = 0;
+    //cumulated_line_size = 0;
     //for (int i = 0; i < lines; i++) {
-    //    cumulated_line_sizes += current_line_size;
+    //    cumulated_line_size += current_line_size;
     //    current_line_size = line_sizes[i];
     //    //if (i != 10) {
-    //    //    cumulated_line_sizes += line_sizes[i];
+    //    //    cumulated_line_size += line_sizes[i];
     //    //    continue;
     //    //}
 
@@ -109,7 +109,7 @@ int main() {
     //        continue;
     //    }
 
-    //    if (line_data[cumulated_line_sizes] != 1 || line_data[cumulated_line_sizes+current_line_size-1] != 1) {
+    //    if (line_data[cumulated_line_size] != 1 || line_data[cumulated_line_size+current_line_size-1] != 1) {
     //        std::cout << "Case #" << i << ": NO" << std::endl;
     //        continue;
     //    }
@@ -118,11 +118,11 @@ int main() {
 
     //    for (int j = 0; j < current_line_size-1; j++) {
     //        if (before_max) {
-    //            if (line_data[cumulated_line_sizes+j+1] - line_data[cumulated_line_sizes+j] == 1) {
+    //            if (line_data[cumulated_line_size+j+1] - line_data[cumulated_line_size+j] == 1) {
     //                continue;
     //            }
 
-    //            if (line_data[cumulated_line_sizes+j+1] - line_data[cumulated_line_sizes+j] == -1) {
+    //            if (line_data[cumulated_line_size+j+1] - line_data[cumulated_line_size+j] == -1) {
     //                before_max = false;
     //                continue;
     //            }
@@ -132,7 +132,7 @@ int main() {
     //        }
 
     //        if (!before_max) {
-    //            if (line_data[cumulated_line_sizes+j+1] - line_data[cumulated_line_sizes+j] == -1) {
+    //            if (line_data[cumulated_line_size+j+1] - line_data[cumulated_line_size+j] == -1) {
     //                continue;
     //            }
 
@@ -156,17 +156,17 @@ int main() {
     //int max_height;
     //int max_valid_height;
 
-    //cumulated_line_sizes = 0;
+    //cumulated_line_size = 0;
     //current_line_size = 0;
 
     //for (int i = 0; i < lines; i++) {
-    //    cumulated_line_sizes += current_line_size;
+    //    cumulated_line_size += current_line_size;
     //    current_line_size = line_sizes[i];
 
     //    max_valid_height = 0;
 
     //    std::vector<std::tuple<int, int>> slice(current_line_size);
-    //    slice_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, slice, line_data);
+    //    slice_with_indicies(cumulated_line_size, cumulated_line_size+current_line_size, slice, line_data);
     //    
     //    std::sort(slice.begin(), slice.end(), sort_desc);
 
@@ -180,15 +180,15 @@ int main() {
     //                break;
     //            }
 
-    //            current_pos = cumulated_line_sizes + index - height + 1;
+    //            current_pos = cumulated_line_size + index - height + 1;
 
-    //            if (line_data[current_pos] != 1 || line_data[cumulated_line_sizes+index+height-1] != 1) {
+    //            if (line_data[current_pos] != 1 || line_data[cumulated_line_size+index+height-1] != 1) {
     //                continue; 
     //            }
 
     //            before_max = true;
 
-    //            for (; current_pos < cumulated_line_sizes + index + height-1; current_pos++) {
+    //            for (; current_pos < cumulated_line_size + index + height-1; current_pos++) {
     //                if (before_max) {
     //                    if (line_data[current_pos+1] - line_data[current_pos] == 1) {
     //                        continue;
@@ -225,14 +225,14 @@ int main() {
     //    std::cout << "Case #" << i << ": " << max_height << std::endl;
     //}
     
-    // Subsection 3
+    // Subtask 3
     //int max_len;
 
-    //cumulated_line_sizes = 0;
+    //cumulated_line_size = 0;
     //current_line_size = 0;
 
     //for (int i = 0; i < lines; i++) {
-    //    cumulated_line_sizes += current_line_size;
+    //    cumulated_line_size += current_line_size;
     //    current_line_size = line_sizes[i];
 
     //    //if (i != 13) {
@@ -251,12 +251,12 @@ int main() {
     //            before_max = false;
     //        }
 
-    //        if (before_max && line_data[cumulated_line_sizes+j] < j + 1) {
+    //        if (before_max && line_data[cumulated_line_size+j] < j + 1) {
     //            max_len = 0;
     //            goto broke;
     //        }
 
-    //        if (!before_max && line_data[cumulated_line_sizes+j] < current_line_size-j) {
+    //        if (!before_max && line_data[cumulated_line_size+j] < current_line_size-j) {
     //            max_len = 0;
     //            goto broke;
     //        }
@@ -269,22 +269,58 @@ int main() {
     //    std::cout << "Case #" << i << ": " << max_len << std::endl;
     //}
     
-    cumulated_line_sizes = 0;
+    // Subtask 4
+    
+    cumulated_line_size = 0;
     current_line_size = 0;
 
+    int current_pos;
+    int max_height;
+    int index;
+
+    int max_len;
+
     for (int i = 0; i < lines; i++) {
-        cumulated_line_sizes += current_line_size;
+        cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
         
         std::vector<std::tuple<int, int>> max_heights(current_line_size);
-        max_heights_with_indicies(cumulated_line_sizes, cumulated_line_sizes+current_line_size, max_heights, line_data);
+        max_heights_with_indicies(cumulated_line_size, cumulated_line_size+current_line_size, max_heights, line_data);
 
         std::sort(max_heights.begin(), max_heights.end(), sort_desc);
 
-        std::cout << "Case " << i << std::endl;
+        max_len = 0;
 
         for (int j = 0; j < current_line_size; j++) {
-            std::cout << std::get<0>(max_heights[j]) << " "<< std::get<1>(max_heights[j]) << std::endl;
+            before_max = false;
+
+            max_height = std::get<0>(max_heights[j]);
+            index = std::get<1>(max_heights[j]);
+
+            current_pos = index - max_height + 1; 
+
+            for (; current_pos < index + max_height - 1; current_pos++) {
+                if (before_max) {
+                    if (current_pos - index + max_height < line_data[cumulated_line_size+current_pos]) {
+                        goto broke;
+                    }
+
+                    if (current_pos == index) {
+                        before_max = false;
+                    }
+                } else {
+                    if (index + max_height - current_pos < line_data[cumulated_line_size+current_pos]) {
+                        goto broke;
+                    }
+                }
+            }
+
+            std::cout << "Case #" << i << ": " << 2 * max_height - 1 << std::endl;
+            break;
+
+            broke:
+
+            continue;
         }
     }
     return 0;
