@@ -349,9 +349,9 @@ int main() {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
 
-        if (i != 5) {
-            continue;
-        }
+        //if (i != 5) {
+        //    continue;
+        //}
         
         std::vector<std::tuple<int, int>> max_heights(current_line_size);
         max_heights_with_indicies(cumulated_line_size, cumulated_line_size+current_line_size, max_heights, line_data);
@@ -372,10 +372,10 @@ int main() {
             if (current_max_height <= max_len / 2 + 1 && max_len != 0) {
                 break;
             }
-            if (left_reducer_index != -1 && std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index) {
+            if (left_reducer_index != -1 && std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index && std::get<0>(max_heights[j]) + std::get<1>(max_heights[j]) - 1 < right_reducer_index) {
                 continue;
             }
-            if (right_reducer_index != -1 && std::get<1>(max_heights[j]) > index && std::get<1>(max_heights[j]) < right_reducer_index) {
+            if (right_reducer_index != -1 && std::get<1>(max_heights[j]) > index && std::get<1>(max_heights[j]) < right_reducer_index && std::get<1>(max_heights[j]) - std::get<0>(max_heights[j]) + 1 > left_reducer_index) {
                 continue;
             }
 
@@ -391,12 +391,12 @@ int main() {
                 if (height_left < current_max_height - offset) {
                     if (height_left < height_right)
                         current_max_height -= current_max_height - offset - height_left;
-                    left_reducer_index = cumulated_line_size+index-offset;
+                    left_reducer_index = index-offset;
                 }
                 if (height_right < current_max_height - offset) {
                     if (height_right < height_left)
                         current_max_height -= current_max_height - offset - height_right;
-                    right_reducer_index = cumulated_line_size+index+offset;
+                    right_reducer_index = index+offset;
                 }
             }
 
