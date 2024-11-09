@@ -332,7 +332,12 @@ int main() {
     //}
     
     int current_max_height;
-    int smallest_height;
+
+    int height_left;
+    int height_right;
+    int left_reducer_index;
+    int right_reducer_index;
+
     int index;
     int max_len;
 
@@ -342,25 +347,48 @@ int main() {
     for (int i = 0; i < lines; i++) {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
+
+        //if (i != 3) {
+        //    continue;
+        //}
         
         std::vector<std::tuple<int, int>> max_heights(current_line_size);
         max_heights_with_indicies(cumulated_line_size, cumulated_line_size+current_line_size, max_heights, line_data);
 
         std::sort(max_heights.begin(), max_heights.end(), sort_desc);
 
+        //for (int j = 0; j < current_line_size; j++) {
+        //    std::cout << std::get<0>(max_heights[j]) << " " << std::get<1>(max_heights[j]) << std::endl;
+        //}
+
         max_len = 0;
+
+        left_reducer_index = -1;
+        right_reducer_index = -1;
 
         for (int j = 0; j < current_line_size; j++) {
             current_max_height = std::get<0>(max_heights[j]);
-            if (current_max_height < max_len / 2 + 1)
+            if (current_max_height <= max_len / 2 + 1)
                 break;
-            index = std::get<1>(max_heights[i]);
+            if (left_reducer_index != -1 && std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index)
+                continue;
+            if (right_reducer_index != -1 && std::get<1>(max_heights[j]) > index && std::get<1>(max_heights[j]) < right_reducer_index)
+                continue;
+            index = std::get<1>(max_heights[j]);
 
             for (int offset = 1; offset < current_max_height; offset++) {
-                smallest_height = std::min(line_data[cumulated_line_size+index-offset], line_data[cumulated_line_size+index+offset]);
+                height_left = line_data[cumulated_line_size+index-offset];
+                height_right = line_data[cumulated_line_size+index+offset];
 
-                if (smallest_height < current_max_height - offset) {
-                    current_max_height -= current_max_height - offset - smallest_height;
+                if (height_left < current_max_height - offset) {
+                    if (height_left < height_right)
+                        current_max_height -= current_max_height - offset - height_left;
+                    left_reducer_index = cumulated_line_size+index-offset;
+                }
+                if (height_right < current_max_height - offset) {
+                    if (height_right < height_left)
+                        current_max_height -= current_max_height - offset - height_right;
+                    right_reducer_index = cumulated_line_size+index+offset;
                 }
             }
 
