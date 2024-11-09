@@ -338,6 +338,8 @@ int main() {
     int height_right;
     int left_reducer_index;
     int right_reducer_index;
+    bool set_left;
+    bool set_right;
 
     int index;
     int max_len;
@@ -349,7 +351,7 @@ int main() {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
 
-        //if (i != 5) {
+        //if (i != 33) {
         //    continue;
         //}
         
@@ -372,18 +374,20 @@ int main() {
             if (current_max_height <= max_len / 2 + 1 && max_len != 0) {
                 break;
             }
-            if (left_reducer_index != -1 && std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index && std::get<0>(max_heights[j]) + std::get<1>(max_heights[j]) - 1 < right_reducer_index) {
-                continue;
-            }
-            if (right_reducer_index != -1 && std::get<1>(max_heights[j]) > index && std::get<1>(max_heights[j]) < right_reducer_index && std::get<1>(max_heights[j]) - std::get<0>(max_heights[j]) + 1 > left_reducer_index) {
-                continue;
+            if (left_reducer_index != -1 && right_reducer_index != -1) {
+                    if (std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index && std::get<0>(max_heights[j]) + std::get<1>(max_heights[j]) - 1 < right_reducer_index) {
+                    continue;
+                }
+                if (std::get<1>(max_heights[j]) > index && std::get<1>(max_heights[j]) < right_reducer_index && std::get<1>(max_heights[j]) - std::get<0>(max_heights[j]) + 1 > left_reducer_index) {
+                    continue;
+                }
             }
 
             index = std::get<1>(max_heights[j]);
 
             left_reducer_index = -1;
             right_reducer_index = -1;
-
+            
             for (int offset = 1; offset < current_max_height; offset++) {
                 height_left = line_data[cumulated_line_size+index-offset];
                 height_right = line_data[cumulated_line_size+index+offset];
@@ -391,12 +395,14 @@ int main() {
                 if (height_left < current_max_height - offset) {
                     if (height_left < height_right)
                         current_max_height -= current_max_height - offset - height_left;
-                    left_reducer_index = index-offset;
+                    if (left_reducer_index == -1)
+                        left_reducer_index = index-offset;
                 }
                 if (height_right < current_max_height - offset) {
                     if (height_right < height_left)
                         current_max_height -= current_max_height - offset - height_right;
-                    right_reducer_index = index+offset;
+                    if (right_reducer_index == -1)
+                        right_reducer_index = index+offset;
                 }
             }
 
