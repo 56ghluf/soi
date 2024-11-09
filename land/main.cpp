@@ -393,16 +393,30 @@ int main() {
                 height_right = line_data[cumulated_line_size+index+offset];
 
                 if (height_left < current_max_height - offset) {
-                    if (height_left < height_right)
+                    if (height_right < height_left) {
+                        current_max_height -= current_max_height - offset - height_right;
+                        if (left_reducer_index == -1)
+                            left_reducer_index = index-offset;
+                        if (right_reducer_index == -1)
+                            right_reducer_index = index+offset;
+                    } else {
                         current_max_height -= current_max_height - offset - height_left;
-                    if (left_reducer_index == -1)
-                        left_reducer_index = index-offset;
+                        if (left_reducer_index == -1)
+                            left_reducer_index = index-offset;
+                    }
                 }
                 if (height_right < current_max_height - offset) {
-                    if (height_right < height_left)
+                    if (height_left < height_right) {
+                        current_max_height -= current_max_height - offset - height_left;
+                        if (left_reducer_index == -1)
+                            left_reducer_index = index-offset;
+                        if (right_reducer_index == -1)
+                            right_reducer_index = index+offset;
+                    } else {
                         current_max_height -= current_max_height - offset - height_right;
-                    if (right_reducer_index == -1)
-                        right_reducer_index = index+offset;
+                        if (right_reducer_index == -1)
+                            right_reducer_index = index+offset;
+                    }
                 }
             }
 
