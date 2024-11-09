@@ -331,6 +331,7 @@ int main() {
     //    std::cout << "Case #" << i << ": " << max_len << std::endl;
     //}
     
+    // Subtask 5
     int current_max_height;
 
     int height_left;
@@ -348,7 +349,7 @@ int main() {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
 
-        //if (i != 3) {
+        //if (i != 4) {
         //    continue;
         //}
         
@@ -368,7 +369,7 @@ int main() {
 
         for (int j = 0; j < current_line_size; j++) {
             current_max_height = std::get<0>(max_heights[j]);
-            if (current_max_height <= max_len / 2 + 1)
+            if (current_max_height <= max_len / 2 + 1 && max_len != 0)
                 break;
             if (left_reducer_index != -1 && std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index)
                 continue;
