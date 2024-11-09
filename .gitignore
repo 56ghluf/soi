@@ -1,5 +1,8 @@
 .DS_Store
 
+**/input*.txt
+**/output*.txt
+
 # Prerequisites
 *.d
 
