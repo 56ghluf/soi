@@ -349,9 +349,9 @@ int main() {
         cumulated_line_size += current_line_size;
         current_line_size = line_sizes[i];
 
-        //if (i != 4) {
-        //    continue;
-        //}
+        if (i != 5) {
+            continue;
+        }
         
         std::vector<std::tuple<int, int>> max_heights(current_line_size);
         max_heights_with_indicies(cumulated_line_size, cumulated_line_size+current_line_size, max_heights, line_data);
@@ -369,13 +369,20 @@ int main() {
 
         for (int j = 0; j < current_line_size; j++) {
             current_max_height = std::get<0>(max_heights[j]);
-            if (current_max_height <= max_len / 2 + 1 && max_len != 0)
+            if (current_max_height <= max_len / 2 + 1 && max_len != 0) {
                 break;
-            if (left_reducer_index != -1 && std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index)
+            }
+            if (left_reducer_index != -1 && std::get<1>(max_heights[j]) < index && std::get<1>(max_heights[j]) > left_reducer_index) {
                 continue;
-            if (right_reducer_index != -1 && std::get<1>(max_heights[j]) > index && std::get<1>(max_heights[j]) < right_reducer_index)
+            }
+            if (right_reducer_index != -1 && std::get<1>(max_heights[j]) > index && std::get<1>(max_heights[j]) < right_reducer_index) {
                 continue;
+            }
+
             index = std::get<1>(max_heights[j]);
+
+            left_reducer_index = -1;
+            right_reducer_index = -1;
 
             for (int offset = 1; offset < current_max_height; offset++) {
                 height_left = line_data[cumulated_line_size+index-offset];
